@@ -1,0 +1,11 @@
+{% extends '_components/base.twig' %}
+
+{# --- Your solution should go below this comment. --- #}
+
+{% set recommendations = craft.entries
+    .section('destinations')
+    .id(['not']|merge(dislikeIds))
+    .orderBy('RAND()')
+    .limit(3)
+    .all()
+%}

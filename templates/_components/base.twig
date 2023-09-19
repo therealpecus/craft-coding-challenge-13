@@ -1,0 +1,81 @@
+{% set excludeIdCondition = ['not']
+    |merge(likeIds)
+    |merge(dislikeIds)
+    |merge(pass is defined ? [pass] : [])
+%}
+{% set entry = craft.entries
+    .section('destinations')
+    .id(excludeIdCondition)
+    .with([
+        'tags',
+        ['images', {
+            withTransforms: ['large']
+        }]
+    ])
+    .orderBy('RAND()')
+    .one()
+%}
+
+{% block content %}
+    <div class="px-4 md:px-0 max-w-3xl mx-auto my-6 space-y-3 text-center">
+        {% if entry %}
+            {% set image = entry.images.collect().random %}
+            {% set tags = entry.tags.collect().pluck('title').implode(', ') %}
+            <img src="{{ image.getUrl('large') }}" width="{{ image.getWidth('large') }}" height="{{ image.getHeight('large') }}" title="{{ tags }}" class="rounded-lg">
+            <div class="text-2xl">
+                Would you like to visit this destination?
+            </div>
+            <div class="space-x-2 text-lg font-semibold text-gray-900">
+                <button sprig s-val:like="{{ entry.id }}" type="button" class="inline-flex items-center gap-x-1 rounded-md bg-white px-3.5 py-2.5 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-green-600">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                    </svg>
+                    Yes
+                </button>
+                <button sprig s-val:dislike="{{ entry.id }}" type="button" class="inline-flex items-center gap-x-1 rounded-md bg-white px-3.5 py-2.5 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-red-600">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                    </svg>
+                    No
+                </button>
+                <button sprig s-val:pass="{{ entry.id }}" type="button" class="inline-flex items-center gap-x-1 rounded-md bg-white px-3.5 py-2.5 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-gray-600">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.94 6.94a.75.75 0 11-1.061-1.061 3 3 0 112.871 5.026v.345a.75.75 0 01-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 108.94 6.94zM10 15a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    </svg>
+                    I don’t know (pass)
+                </button>
+            </div>
+        {% else %}
+            <div class="py-12 space-y-3">
+                <div class="text-2xl">
+                    We’ve run out of destinations to show you.
+                </div>
+                <div class="space-x-2 text-lg font-semibold text-gray-900">
+                    <button sprig s-val:restart="1" type="button" class="inline-flex items-center gap-x-1 rounded-md bg-white px-3.5 py-2.5 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100">
+                        Start Over
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.75 9.25a.75.75 0 000 1.5h4.59l-2.1 1.95a.75.75 0 001.02 1.1l3.5-3.25a.75.75 0 000-1.1l-3.5-3.25a.75.75 0 10-1.02 1.1l2.1 1.95H6.75z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+        <div class="pt-5 text-2xl">
+            Our recommendations (based on your preferences):
+        </div>
+        <div>
+            <div class="flex space-x-2">
+                {% for entry in recommendations %}
+                    <div class="w-1/3 space-y-2">
+                        {% set image = entry.images.one() %}
+                        {% set tags = entry.tags.collect().pluck('title').implode(', ') %}
+                        <img src="{{ image.getUrl('small') }}" width="{{ image.getWidth('small') }}" height="{{ image.getHeight('small') }}" alt="{{ entry.title }}" title="{{ tags }}" class="rounded-lg">
+                        <div>
+                            {{ loop.index }}. {{ entry.title }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

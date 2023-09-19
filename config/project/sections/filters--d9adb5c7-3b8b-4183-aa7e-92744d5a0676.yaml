@@ -1,0 +1,15 @@
+defaultPlacement: end
+enableVersioning: false
+handle: filters
+name: Filters
+propagationMethod: all
+siteSettings:
+  f255ef6d-0c55-4bdc-9ced-f610bbb3bed6: # $CRAFT_SITE_NAME
+    enabledByDefault: true
+    hasUrls: false
+    template: null
+    uriFormat: null
+structure:
+  maxLevels: 1
+  uid: e0d30e4f-de92-42a0-bff4-f7219ec055cc
+type: structure

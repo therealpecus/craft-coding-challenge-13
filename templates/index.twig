@@ -1,0 +1,33 @@
+{% extends '_layout.twig' %}
+
+{% block body %}
+
+    {% set filterValues = { style: 'elegant', colour: 'green', size: 'm', cut: 'slim' } %}
+    {# Your solution code #}
+    <div class="text-center font-mono leading-loose">
+        {{ filterValues|url_encode }}
+        <div class="font-sans text-gray-500">should equal</div>
+        cut=slim&colour=green&size=m&style=elegant
+    </div>
+
+    <hr class="w-full border border-gray-300">
+
+    {% set filterValues = { size: 's', colour: 'yellow' } %}
+    {# Your solution code #}
+    <div class="text-center font-mono leading-loose">
+        {{ filterValues|url_encode }}
+        <div class="font-sans text-gray-500">should equal</div>
+        colour=yellow&size=s
+    </div>
+
+    <hr class="w-full border border-gray-300">
+
+    {% set filterValues = { cut: 'regular' } %}
+    {# Your solution code #}
+    <div class="text-center font-mono leading-loose">
+        {{ filterValues|url_encode }}
+        <div class="font-sans text-gray-500">should equal</div>
+        cut=regular
+    </div>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends '_components/recommendations.twig' %}
+
+{% set likeIds = craft.app.request.cookies.getValue('likeIds') ?? [] %}
+{% set dislikeIds = craft.app.request.cookies.getValue('dislikeIds') ?: [] %}
+
+{% set restart = restart ?? false %}
+{% if restart %}
+    {% do craft.app.response.cookies.remove(create({
+        class: 'yii\\web\\cookie',
+        name: 'likeIds',
+    })) %}
+    {% do craft.app.response.cookies.remove(create({
+        class: 'yii\\web\\cookie',
+        name: 'dislikeIds',
+    })) %}
+    {% set likeIds = [] %}
+    {% set dislikeIds = [] %}
+{% endif %}
+
+{% set like = like ?? null %}
+{% if like and like not in likeIds %}
+    {% set likeIds = likeIds|push(like) %}
+    {% do craft.app.response.cookies.add(create({
+        class: 'yii\\web\\cookie',
+        name: 'likeIds',
+        value: likeIds,
+    })) %}
+{% endif %}
+
+{% set dislike = dislike ?? null %}
+{% if dislike and dislike not in dislikeIds %}
+    {% set dislikeIds = dislikeIds|push(dislike) %}
+    {% do craft.app.response.cookies.add(create({
+        class: 'yii\\web\\cookie',
+        name: 'dislikeIds',
+        value: dislikeIds,
+    })) %}
+{% endif %}
