@@ -4,6 +4,21 @@
 
     {% set filterValues = { style: 'elegant', colour: 'green', size: 'm', cut: 'slim' } %}
     {# Your solution code #}
+    {# 
+        Query entries, filtering entries that are not part of the current filter 
+        Fetch as collection for further processing
+        Extract `slug` column
+        For each filter (slug) return an object with the filter slug as key, and the current filter filterValue
+        Flatten the nested collection and return as array
+    #}
+    {% set filterValues = craft.entries()
+                                .section('Filters')
+                                .slug(filterValues|keys)
+                                .collect()
+                                .pluck('slug')
+                                .flatMap(k => { (k): filterValues[k] })
+                                .toArray()
+    %}
     <div class="text-center font-mono leading-loose">
         {{ filterValues|url_encode }}
         <div class="font-sans text-gray-500">should equal</div>
@@ -14,6 +29,14 @@
 
     {% set filterValues = { size: 's', colour: 'yellow' } %}
     {# Your solution code #}
+    {% set filterValues = craft.entries()
+                                .section('Filters')
+                                .slug(filterValues|keys)
+                                .collect()
+                                .pluck('slug')
+                                .flatMap(k => { (k): filterValues[k] })
+                                .toArray()
+    %}
     <div class="text-center font-mono leading-loose">
         {{ filterValues|url_encode }}
         <div class="font-sans text-gray-500">should equal</div>
@@ -24,10 +47,18 @@
 
     {% set filterValues = { cut: 'regular' } %}
     {# Your solution code #}
-    <div class="text-center font-mono leading-loose">
-        {{ filterValues|url_encode }}
-        <div class="font-sans text-gray-500">should equal</div>
-        cut=regular
-    </div>
+    {% set filterValues = craft.entries()
+                            .section('Filters')
+                            .slug(filterValues|keys)
+                            .collect()
+                            .pluck('slug')
+                            .flatMap(k => { (k): filterValues[k] })
+                            .toArray()
+    %}
+<div class="text-center font-mono leading-loose">
+    {{ filterValues|url_encode }}
+    <div class="font-sans text-gray-500">should equal</div>
+    cut=regular
+</div>
 
 {% endblock %}
